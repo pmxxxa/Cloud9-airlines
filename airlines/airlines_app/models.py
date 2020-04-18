@@ -69,6 +69,7 @@ class Passenger(models.Model):
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
     date_of_birth = models.DateField()
+    age_range = models.CharField(max_length=16, null=True)
     nationality = models.CharField(max_length=64)
     passport = models.CharField(max_length=64, null=True, unique=True)
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE)

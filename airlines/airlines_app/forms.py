@@ -6,7 +6,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from airlines_app.admin import UserChangeForm
-from airlines_app.models import Flight, MyUser, Passenger
+from airlines_app.models import Flight, MyUser, Passenger, TITLES
 
 
 class DateInput(forms.DateInput):
@@ -105,25 +105,26 @@ class SearchFlightForm(forms.Form):
         if flights is None:
             raise forms.ValidationError('No flights available')
 
-    """class Meta:
-        model = Flight
-        exclude = ['number', 'duration', 'arrival_date', 'fare', 'available_seats']"""
 
+class PassengerForm(forms.Form):
+    age_range = forms.CharField(widget=forms.HiddenInput)
+    flight_number = forms.CharField(widget=forms.HiddenInput)
+    title = forms.ChoiceField(choices=TITLES)
+    first_name = forms.CharField(max_length=64)
+    last_name = forms.CharField(max_length=64)
+    date_of_birth = forms.DateField(widget=DateInput)
+    nationality = forms.CharField(max_length=64)
 
-class BookingForm(forms.Form):
-    pass
-
-
-class PassengerForm(forms.ModelForm):
-    class Meta:
-        model = Passenger
-        exclude = ['booking', 'passport', 'flight', 'checked_in']
-        widgets = {'date_of_birth': DateInput()}
-
-    def clean(self):
-        adults = int(self.cleaned_data.get('adults'))
-        if adults > 0:
-            raise forms.ValidationError('too much')
+    def clean_date_of_birth(self):
+        age_range = self.cleaned_data.get('age_range')
+        date_of_birth = self.cleaned_data.get('date_of_birth')
+        flight_number = self.cleaned_data.get('flight_number')
+        print(flight_number)
+        flight = Flight.objects.get(number=flight_number)
+        if age_range == "adult":
+            if (flight.depart.date() - date_of_birth).total_seconds() / 365 < 1382400:
+                print("datyyyy", (flight.depart.date() - date_of_birth).total_seconds() / 365)
+                raise forms.ValidationError('No flights available')
 
 
 class LuggageForm(forms.Form):
