@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>BOOKING DETAILS</h3><br>
+    <label><b>{{ booking.flight.number }} {{ booking.flight.city_from.city }}
+        to {{ booking.flight.city_to.city }}</b></label><br><br>
+    <label><b>Departure:</b> {{ booking.flight.depart }}</label><br>
+    <label><b>Arrive:</b> {{ booking.flight.arrival }}</label><br><br>
+    <label><b>Passengers:</b><br>
+        <ul>
+            {% for p in passengers %}
+                <li>{{ p }}  {% if p.checked_in == True %} - CHECKED-IN{% endif %}</li>
+                Luggage:
+                <ul>
+                    {% for l in luggage %}
+                        {% if  p.id == l.passenger.id %}
+                            <li>{{ l.luggage_type }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul><br>
+            {% endfor %}
+        </ul>
+        <label> <b>Total cost:</b> {{ booking.total_cost }} €</label><br>
+        <label><b>Payment status:</b>
+            {% if booking.paid == True %}
+                paid
+            {% else %}
+                unpaid<br>
+                <a href="/payment/{{ booking.id }}/">Pay now</a>
+            {% endif %}
+            {% if check_in_avalible == True %}<br><br>
+                <label>Check-in is already available</label><br>
+                <a href="/check_in/{{ booking.id }}/">check-in here</a>
+            {% endif %}
+{% endblock %}

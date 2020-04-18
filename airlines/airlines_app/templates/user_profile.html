@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>MY PROFILE</h3><br>
+    <p>{{ user.name }} {{ user.first_name }} {{ user.last_name }}<br>
+        Member since {{ user.date_joined }}</p><br>
+    <label><b>My details</b></label><p align="left"><a href="/edit_profile/">Edit profile</a>&emsp;&emsp;&emsp;<a href="/change_password/{{ user.username }}/">Change your password</a></p>
+    <p><b>Email</b> &emsp;{{ user.email }}<br>
+        <b>Date of birth</b> &emsp;{{ user.date_of_birth }}<br>
+        <b>Phone number</b> &emsp;{{ user.phone_number }}<br>
+        <b>Nationality</b> &emsp;{{ user.nationality }}<br></p><br><br>
+    <a href="/my_bookings/">My bookings</a><br><br>
+{% endblock %}

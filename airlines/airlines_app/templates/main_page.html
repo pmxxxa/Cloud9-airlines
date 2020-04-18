@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>SEARCH FLIGHT</h3>
+    <form action="#" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Search"><br><br>
+    </form>
+    {% if search == True %}
+        <div>
+            <label>{{ cf.name }} to {{ ct.name }}</label>
+            <table border="1">
+                <tr>
+                    <th>Depart</th>
+                    <th>Duration</th>
+                    <th>Arrival</th>
+                    <th>Flight no.</th>
+                    <th>Fare</th>
+                </tr>
+                {% for flight in flights %}
+                    <tr>
+                        <td>{{ flight.depart }}</td>
+                        <td></td>
+                        <td>{{ flight.arrival }}</td>
+                        <td>{{ flight.number }}</td>
+                        <td>{{ flight.fare }}€</td>
+                        <td>
+                            <a href="/booking/{{ flight.number }}/{{ adults }}/{{ teens }}/{{ children }}/{{ infants }}/">Book</a>
+                        </td>
+                    </tr>
+                    {% if warning == True %}
+                        <tr> Only {{ flight.available_seats }} seats left for this flight</tr>{% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

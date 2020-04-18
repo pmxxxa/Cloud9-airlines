@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Cloude9 airlines</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+    <header valign="top" align="right">
+        <label>Welcome, {{ user.username }} to myCloud9!</label>
+        <a href="/my_profile/">My profile</a>
+        <a href="/logout/">Log out</a>
+    </header>
+{% else %}
+    <header valign="top" align="right">
+        <label>Sign up myCloud9</label>
+        <a href="/sign_up/">Sign up</a>
+    </header>&emsp;
+    <header valign="top" align="right">
+        <label>Log into myCloud9</label>
+        <a href="/login/">Log in</a>
+    </header>
+{% endif %}
+<div class="tlo">
+    {% block content %}
+        Default content - didn't you forget to add a block in the derived template?
+    {% endblock content %}
+</div>
+</body>
+</html>

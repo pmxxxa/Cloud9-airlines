@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>MY BOOKINGS</h3><br>
+    <label><b>Upcoming trips</b></label><br>
+    <table border="1">
+        {% for u in upcoming_trips %}
+            <tr>
+                <td>{{ u.flight.number }}</td>
+                <td>{{ u.flight.city_from.city }} to {{ u.flight.city_to.city }}</td>
+                <td>{{ u.flight.depart }}</td>
+                <td><a href="/booking_details/{{ u.id }}/">Details</a></td>
+            </tr>
+        {% endfor %}
+    </table><br><br><br>
+    <label><b>Past trips</b></label><br>
+    <table border="1">
+        {% for p in past_trips %}
+            <tr>
+                <td>{{ p.flight.number }}</td>
+                <td>{{ p.flight.city_from.city }} to {{ p.flight.city_to.city }}</td>
+                <td>{{ p.flight.depart }}</td>
+                <td><a href="/booking_details/{{ p.id }}/">Details</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

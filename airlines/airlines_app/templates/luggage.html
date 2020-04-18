@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>BOOK FLIGHT booking.{{ flight.number }} from {{ booking.flight.city_from.city }} to {{ flight.city_from.city }}
+        to {{ booking.flight.city_to.city }}</h3>
+    <label><b>Buy extra luggage</b></label><br><br>
+    <form action="#" method="post">
+        {% csrf_token %}
+        {% for x in list_get %}
+            <div class="form-inline">
+                <label> Passenger {{ x.prefix }}</label>
+                {{ x.as_p }}
+            </div><br><br>
+        {% endfor %}
+        <p>You have 48 hours to make the payment otherwise your booking will be canceled. Do you pay now or later?</p>
+        <input type="submit" name="pay_later" value="Book and pay later">
+        <input type="submit" name="pay_now" value="Pay">
+    </form>
+{% endblock %}
+

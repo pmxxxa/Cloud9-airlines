@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>PAYMENT</h3>
+    <p>Payment by credit card only!!!</p><br><br>
+    <div>
+        <label><b>{{ booking.flight.city_from.city }} to {{ booking.flight.city_to.city }}</b></label><br><br>
+        <label><b>Passengers:</b> &emsp;&emsp;{{ passengers }} x {{ booking.flight.fare }} €</label><br><br>
+        {% if  luggage > 0 %}
+            <label><b>Extra paid luggage:</b></label>
+            {% if  priority_2_cabin_bags > 0 %}
+                <p>Priority & 2 Cabin Bags: &emsp;&emsp; {{ priority_2_cabin_bags }} x 10 €</p>{% endif %}
+            {% if  ten_kg_check_in_bag > 0 %} <p>10kg Check-in Bag: &emsp;&emsp; {{ ten_kg_check_in_bag }} x 15 €</p>
+            {% endif %}
+            {% if  twenty_kg_check_in_bag > 0 %}
+                <p>20kg Check-in Bag: &emsp;&emsp; {{ twenty_kg_check_in_bag }} x 25 €</p>{% endif %}
+        {% endif %}
+        <br><label> <b>Total cost: {{ booking.total_cost }} €</b> </label>
+    </div>
+    <form action="#" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Pay">
+    </form>
+
+{% endblock %}

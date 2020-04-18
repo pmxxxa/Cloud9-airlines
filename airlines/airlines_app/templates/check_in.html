@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>CHECK-IN FLIGHT booking.{{ flight.number }} from {{ booking.flight.city_from.city }} to {{ flight.city_from.city }}
+        to {{ booking.flight.city_to.city }}</h3>
+    <label><b>Enter the passport number for each passenger to check in</b></label><br><br>
+    <form action="#" method="post">
+        {% csrf_token %}
+        {% for x in list_get %}
+            <div class="form-inline">
+                <label> Passenger {{ x.prefix }}</label>
+                {{ x.as_p }}
+            </div><br><br>
+        {% endfor %}
+        <input type="submit" value="Check-in">
+    </form>
+{% endblock %}
+
