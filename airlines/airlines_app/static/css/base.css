@@ -1,0 +1,73 @@
+* {
+    font-family: 'Kanit', serif;
+}
+
+html {
+}
+
+.logo {
+    float: left;
+    width: auto;
+    height: 120px;
+}
+
+header {
+    top: 0;
+    height: 120px;
+    background: rgb(218, 218, 218);
+    background: radial-gradient(circle, rgba(218, 218, 218, 1) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+.bckgr {
+    background: url('/static/img/c9_background.png') no-repeat center center ;
+    background-size: contain;
+    height: 70vh;
+    overflow: auto;
+    clear: both;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.65);
+    padding-left: 100px;
+    padding-right: 100px;
+    height: 200vh;
+}
+
+h3, .welcome {
+    color: #868686;
+}
+
+
+.mycloud9 {
+    color: #FB91B4;
+}
+
+a {
+    text-decoration: none;
+    border-color: #79BDDB;
+    color: darkslateblue;
+}
+
+a:hover {
+    background-color: #79BDDB;
+    color: white;
+}
+
+.user {
+    color: #79BDDB;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    padding: 0.25rem;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+tbody tr:nth-child(odd) {
+    background: #eee;
+}

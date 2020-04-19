@@ -6,7 +6,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from airlines_app.admin import UserChangeForm
-from airlines_app.models import Flight, MyUser, Passenger, TITLES
+from airlines_app.models import Flight, MyUser, Passenger, TITLES, Airport
 
 
 class DateInput(forms.DateInput):
@@ -94,15 +94,20 @@ class SearchFlightForm(forms.Form):
 
     def clean(self):
         city_from = self.cleaned_data['city_from']
+        print(city_from)
+        airport_from = Airport.objects.get(city=city_from)
+        print("airport from", airport_from)
         city_to = self.cleaned_data['city_to']
+        airport_to = Airport.objects.get(city=city_to)
+        print("airport to", airport_to)
         depart = self.cleaned_data['depart']
         if depart:
-            flights = Flight.objects.filter(city_from=city_from).filter(city_to=city_to).filter(depart=depart)
+            flights = Flight.objects.filter(city_from=airport_from).filter(city_to=airport_to).filter(depart=depart)
             if depart < date.today():
                 raise forms.ValidationError('You can not book past flights')
         else:
-            flights = Flight.objects.filter(city_from=city_from).filter(city_to=city_to)
-        if flights is None:
+            flights = Flight.objects.filter(city_from=airport_from).filter(city_to=airport_to)
+        if not flights:
             raise forms.ValidationError('No flights available')
 
 
@@ -113,18 +118,31 @@ class PassengerForm(forms.Form):
     first_name = forms.CharField(max_length=64)
     last_name = forms.CharField(max_length=64)
     date_of_birth = forms.DateField(widget=DateInput)
-    nationality = forms.CharField(max_length=64)
 
-    def clean_date_of_birth(self):
+    """def clean_date_of_birth(self):
         age_range = self.cleaned_data.get('age_range')
         date_of_birth = self.cleaned_data.get('date_of_birth')
         flight_number = self.cleaned_data.get('flight_number')
         print(flight_number)
         flight = Flight.objects.get(number=flight_number)
         if age_range == "adult":
-            if (flight.depart.date() - date_of_birth).total_seconds() / 365 < 1382400:
+            if (flight.depart.date() - date_of_birth).total_seconds() / 365.25 < 1382400:
+                print("datyyyy", (flight.depart.date() - date_of_birth).total_seconds() / 365.25)
+                raise forms.ValidationError('Wrong date of birth')
+        if age_range == "teen":
+            if (flight.depart.date() - date_of_birth).total_seconds() / 365.25 > 1382400 and (
+                    flight.depart.date() - date_of_birth).total_seconds() / 365.25 < 1036800:
                 print("datyyyy", (flight.depart.date() - date_of_birth).total_seconds() / 365)
-                raise forms.ValidationError('No flights available')
+                raise forms.ValidationError('Wrong date of birth')
+        if age_range == "child":
+            if (flight.depart.date() - date_of_birth).total_seconds() / 365.25 > 1036800 and (
+                    flight.depart.date() - date_of_birth).total_seconds() / 365.25 < 172800:
+                print("datyyyy", (flight.depart.date() - date_of_birth).total_seconds() / 365.25)
+                raise forms.ValidationError('Wrong date of birth')
+        if age_range == "infant":
+            if (flight.depart.date() - date_of_birth).total_seconds() / 365.25 > 172800:
+                print("datyyyy", (flight.depart.date() - date_of_birth).total_seconds() / 365.25)
+                raise forms.ValidationError('Wrong date of birth')"""
 
 
 class LuggageForm(forms.Form):
@@ -146,3 +164,4 @@ class PaymentForm(forms.Form):
 
 class CheckInForm(forms.Form):
     passport = forms.CharField(max_length=20)
+    nationality = forms.CharField(max_length=64)

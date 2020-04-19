@@ -37,7 +37,6 @@ class City(models.Model):
 class Airport(models.Model):
     name = models.CharField(max_length=255)
     city = models.ForeignKey(City, on_delete=models.CASCADE)
-    country = models.ForeignKey(Country, on_delete=models.CASCADE)
     iata_code = models.CharField(max_length=3, unique=True)
 
     def __str__(self):
@@ -69,12 +68,11 @@ class Passenger(models.Model):
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
     date_of_birth = models.DateField()
-    age_range = models.CharField(max_length=16, null=True)
-    nationality = models.CharField(max_length=64)
+    nationality = models.CharField(max_length=64, null=True)
     passport = models.CharField(max_length=64, null=True, unique=True)
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
-    checked_in = models.BooleanField(default=False)
+    checked_in = models.BooleanField(default=False, null=True)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'

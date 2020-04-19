@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
     <h3>BOOK FLIGHT {{ flight.number }} from {{ flight.city_from.city }} to {{ flight.city_to.city }}</h3>
+    <label>Enter the correct date for each age category!</label>
     <form action="#" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         {% for x in list_form %}
             <div class="form-inline">
-                <label> Passenger </label>
+                <p> Passenger - {% for i in x.initial.values %} {{ i }} <br>{% endfor %}</p>
                 {{ x.as_p }}
             </div><br><br>
         {% endfor %}

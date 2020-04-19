@@ -3,29 +3,31 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <link href='//fonts.googleapis.com/css2?family=Kanit' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <title>Cloude9 airlines</title>
 </head>
 <body>
 {% if user.is_authenticated %}
     <header valign="top" align="right">
-        <label>Welcome, {{ user.username }} to myCloud9!</label>
-        <a href="/my_profile/">My profile</a>
-        <a href="/logout/">Log out</a>
+        <a href="/"><img class='logo' src="{% static 'c9.png' %}"></a>
+        <label class="welcome">Welcome <label class="user">{{ user.username }}</label> to <label class="mycloud9">myCloud9!</label></label>
+        <a class="header" href="/my_profile/">My profile</a>
+        <a class="header" href="/logout/">Log out</a>
     </header>
 {% else %}
     <header valign="top" align="right">
-        <label>Sign up myCloud9</label>
-        <a href="/sign_up/">Sign up</a>
-    </header>&emsp;
-    <header valign="top" align="right">
-        <label>Log into myCloud9</label>
-        <a href="/login/">Log in</a>
-    </header>
+        <a href="/"><img class='logo' src="{% static 'c9.png' %}"></a>
+        <a href="/sign_up/">Sign up myCloud9</a>&emsp;&emsp;
+        <a href="/login/">Log into myCloud9</a>
+    </header>&emsp;<br>
 {% endif %}
-<div class="tlo">
-    {% block content %}
-        Default content - didn't you forget to add a block in the derived template?
-    {% endblock content %}
+<div class="bckgr">
+    <div class="container">
+        {% block content %}
+            Default content - didn't you forget to add a block in the derived template?
+        {% endblock content %}
+    </div>
 </div>
 </body>
 </html>

@@ -8,7 +8,8 @@
     <label><b>Passengers:</b><br>
         <ul>
             {% for p in passengers %}
-                <li>{{ p }}  {% if p.checked_in == True %} - CHECKED-IN{% endif %}</li>
+                <li>{{ p }}  {% if p.checked_in == True %} - CHECKED-IN <br> nationality: {{ p.nationality }} &emsp;&emsp; passport:{{ p.passport }}{% endif %} &emsp;&emsp;date of birth: {{ p.date_of_birth }}</li>
+
                 Luggage:
                 <ul>
                     {% for l in luggage %}

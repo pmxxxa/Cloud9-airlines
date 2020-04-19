@@ -2,18 +2,17 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from airlines_app.models import City, Country, Airport, Flight, Luggage, Booking, Passenger
+from airlines_app.models import City, Country, Airport, Flight, Luggage, Booking, Passenger, Payment
 from django.contrib.auth.admin import UserAdmin
 from .models import MyUser
 
 admin.site.register(MyUser, UserAdmin)
 
-admin.site.register(Country)
 
 
-# @admin.register(Country)
-# class CountryAdmin(admin.ModelAdmin):
-#    list_display = [field.name for field in Country._meta.fields if field.name != 'id']
+@admin.register(Country)
+class CountryAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Country._meta.fields if field.name != 'id']
 
 
 @admin.register(City)
@@ -37,13 +36,18 @@ class LuggageAdmin(admin.ModelAdmin):
 
 
 @admin.register(Booking)
-class LuggageAdmin(admin.ModelAdmin):
+class BookingAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Booking._meta.fields if field.name != 'id']
 
 
 @admin.register(Passenger)
-class LuggageAdmin(admin.ModelAdmin):
+class PassengerAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Passenger._meta.fields if field.name != 'id']
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Payment._meta.fields if field.name != 'id']
 
 
 class UserChangeForm(forms.ModelForm):

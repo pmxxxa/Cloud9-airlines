@@ -11,16 +11,21 @@
             <label>{{ cf.name }} to {{ ct.name }}</label>
             <table border="1">
                 <tr>
+                    <th>From</th>
                     <th>Depart</th>
                     <th>Duration</th>
+                    <th>To</th>
                     <th>Arrival</th>
                     <th>Flight no.</th>
                     <th>Fare</th>
                 </tr>
+
                 {% for flight in flights %}
                     <tr>
+                        <td>{{ flight.city_from }}</td>
                         <td>{{ flight.depart }}</td>
-                        <td></td>
+                        <td>{{ duration }}</td>
+                        <td>{{ flight.city_to }}</td>
                         <td>{{ flight.arrival }}</td>
                         <td>{{ flight.number }}</td>
                         <td>{{ flight.fare }}€</td>
@@ -28,8 +33,6 @@
                             <a href="/booking/{{ flight.number }}/{{ adults }}/{{ teens }}/{{ children }}/{{ infants }}/">Book</a>
                         </td>
                     </tr>
-                    {% if warning == True %}
-                        <tr> Only {{ flight.available_seats }} seats left for this flight</tr>{% endif %}
                 {% endfor %}
             </table>
         </div>

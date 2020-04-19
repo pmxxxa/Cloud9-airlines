@@ -10,7 +10,7 @@ from django.views import View
 
 from airlines_app.forms import LoginForm, ChangePasswordForm, SignUpForm, SearchFlightForm, EditProfileForm, \
     PassengerForm, LuggageForm, PaymentForm, CheckInForm
-from airlines_app.models import MyUser, City, Flight, Passenger, Booking, Luggage, Payment
+from airlines_app.models import MyUser, City, Flight, Passenger, Booking, Luggage, Payment, Airport
 
 
 class MainPageView(View):
@@ -29,9 +29,14 @@ class MainPageView(View):
         form.fields['city_from'].widget.choices = [(x.id, x.name) for x in City.objects.all().order_by('name')]
         form.fields['city_to'].widget.choices = [(x.id, x.name) for x in City.objects.all().order_by('name')]
         if form.is_valid():
+            duration = ''
             # trip = form.cleaned_data.get('trip')
             city_from = form.cleaned_data.get('city_from')
+            airport_from = Airport.objects.get(city=city_from)
+            print("airport from", airport_from)
             city_to = form.cleaned_data.get('city_to')
+            airport_to = Airport.objects.get(city=city_to)
+            print("airport to", airport_to)
             depart = form.cleaned_data.get('depart')
             adults = int(form.cleaned_data.get('adults'))
             teens = int(form.cleaned_data.get('teens'))
@@ -40,21 +45,22 @@ class MainPageView(View):
             cf = City.objects.get(pk=city_from)
             ct = City.objects.get(pk=city_to)
             if depart:
-                flights = Flight.objects.filter(city_from=city_from).filter(city_to=city_to).filter(
+                flights = Flight.objects.filter(city_from=airport_from).filter(city_to=airport_to).filter(
                     available_seats__gte=adults + teens + children).filter(depart__icontains=depart)
             else:
-                flights = Flight.objects.filter(city_from=city_from).filter(
-                    available_seats__gte=adults + teens + children).filter(city_to=city_to).filter(
+                flights = Flight.objects.filter(city_from=airport_from).filter(
+                    available_seats__gte=adults + teens + children).filter(city_to=airport_to).filter(
                     depart__gt=datetime.now())
             if flights:
                 search = True
                 for i in flights:
-                    if i.available_seats == (adults + teens + children) or i.available_seats < 6:
-                        warning = True
-            request.session['adults'] = adults
+                    delta = (i.arrival - i.depart).total_seconds()
+                    h = int(delta // 3600)
+                    m = int((delta % 3600) // 60)
+                    duration = f'{h}h {m}m'
             return render(request, 'main_page.html',
                           {'form': form, 'flights': flights, 'search': search, 'cf': cf, 'ct': ct, 'adults': adults,
-                           'teens': teens, 'children': children, 'infants': infants, 'warning': warning})
+                           'teens': teens, 'children': children, 'infants': infants, 'duration': duration})
         else:
             return render(request, 'main_page.html', {'form': form, 'search': search})
 
@@ -69,9 +75,12 @@ class SignUpView(View):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            first_name = form.cleaned_data.get('first_name')
-            messages.success(request, f'Welcome {first_name} to myCloud9!')
-            return redirect('/')
+            user = authenticate(username=form.cleaned_data['username'],
+                                password=form.cleaned_data['password1'])
+
+            if user.is_active:
+                login(self.request, user)
+                return redirect('/')
         else:
             return render(request, 'sing_up.html', {'form': form})
 
@@ -160,33 +169,33 @@ class BookingView(LoginRequiredMixin, View):
         if adults > 0:
             for i in range(int(adults)):
                 list_form.append(
-                    PassengerForm(prefix=str(j), initial={'age_range': "adult", 'flight_number': flight_number}))
+                    PassengerForm(prefix=str(j), initial={'age_range': 'adult', 'flight_number': flight_number}))
                 print("get prefix adult", j)
                 j += 1
         if teens > 0:
             for i in range(int(teens)):
                 list_form.append(
-                    PassengerForm(prefix=str(j), initial={'age_range': "teen", 'flight_number': flight_number}))
+                    PassengerForm(prefix=str(j), initial={'age_range': 'teen', 'flight_number': flight_number}))
                 print("get prefix teen", j)
                 j += 1
         if children > 0:
             for i in range(int(children)):
                 list_form.append(
-                    PassengerForm(prefix=str(j), initial={'age_range': "child", 'flight_number': flight_number}))
+                    PassengerForm(prefix=str(j), initial={'age_range': 'child', 'flight_number': flight_number}))
                 print("get prefix child", j)
                 j += 1
         if infants > 0:
             for i in range(int(infants)):
                 list_form.append(
-                    PassengerForm(prefix=str(j), initial={'age_range': "infant", 'flight_number': flight_number}))
+                    PassengerForm(prefix=str(j), initial={'age_range': 'infant', 'flight_number': flight_number}))
                 print("get prefix infant", j)
                 j += 1
         """
         for i in range(int(passengers)):
             list_form.append(PassengerForm(prefix=str(i)))
             print("get prefix", i)"""
-        return render(request, 'booking.html', {'flight': flight, 'list_form': list_form, 'passengers': passengers
-                                                })
+        return render(request, 'booking.html',
+                      {'flight': flight, 'list_form': list_form, 'passengers': passengers})
 
     def post(self, request, flight_number, adults, teens, children, infants):
         passengers = int(adults + teens + children + infants)
@@ -226,11 +235,8 @@ class BookingView(LoginRequiredMixin, View):
             first_name = list_form2[i].cleaned_data.get('first_name')
             last_name = list_form2[i].cleaned_data.get('last_name')
             date_of_birth = list_form2[i].cleaned_data.get('date_of_birth')
-            nationality = list_form2[i].cleaned_data.get('nationality')
-            age_range = list_form2[i].cleaned_data.get('age_range')
             passenger = Passenger.objects.create(title=title, first_name=first_name, last_name=last_name,
-                                                 date_of_birth=date_of_birth, nationality=nationality,
-                                                 flight=flight, booking=booking, age_range=age_range)
+                                                 date_of_birth=date_of_birth, flight=flight, booking=booking)
             print(passenger)
             if passenger is None:
                 return render(request, 'booking.html',
@@ -381,7 +387,9 @@ class CheckInView(LoginRequiredMixin, View):
             form = CheckInForm(request.POST, prefix=str(i))
             print(form)
             passport = form.cleaned_data.get('passport')
+            nationality = form.cleaned_data.get('nationality')
             i.passport = passport
+            i.nationality = nationality
             i.checked_in = True
             i.save()
         return redirect(f'/booking_details/{booking_id}/')
